@@ -6,6 +6,10 @@ instructions = {
     "ADD":   "This adds two variables",
     "FLOAT": "This creates a float",
     "EXIT":  "This exits the interpreter",
+    "DEL":   "This deletes a variable",
+    "DIVIDE": "This divides two variables",
+    "MULTIPLY": "This multiplies two variables",
+    "SETINT": "This changes the value of an already defined integer variable",
 }
 def READ(inp):
     if inp.startswith("INT"):
