@@ -1,6 +1,5 @@
 OS_MODE = False
 import os
-import platform
 variables = {}
 instructions = {
     "INT": "This creates an integer",
