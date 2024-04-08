@@ -1,3 +1,6 @@
+OS_MODE = False
+import os
+import platform
 variables = {}
 instructions = {
     "INT": "This creates an integer",
@@ -6,18 +9,27 @@ instructions = {
     "ADD":   "This adds two variables",
     "FLOAT": "This creates a float",
     "EXIT":  "This exits the interpreter",
-    "DEL":   "This deletes a variable",
-    "DIVIDE": "This divides two variables",
-    "MULTIPLY": "This multiplies two variables",
-    "SETINT": "This changes the value of an already defined integer variable",
+    "ENABLE_OS_MODE":    "Enable OS mode",
+    "DISABLE_OS_MODE":   "Disable OS mode",
+    "CLS":  "Clear the screen (Windows)",
+    "CLEAR": "Clear the screen (Linux)",               
 }
+instruction = []
+instructionsArray = ["INT", "STRING", "ADD", "EXIT", "FLOAT", "ENABLE_OS_MODE", "DISABLE_OS_MODE", "CLS", "CLEAR"]
 def READ(inp):
+    global OS_MODE
     if inp.startswith("INT"):
         variableName  = inp[4::]
         if not variableName in variables:
              variables[variableName] = int(input("Enter the variable's value > "))
         else:
             print(f"{variableName} already exists!")
+        instruction.append(inp)
+    elif inp == "ENABLE_OS_MODE":
+        print("USE THIS AT YOUR OWN RISK...")
+        OS_MODE = True
+    elif inp == "DISABLE_OS_MODE":
+        OS_MODE = False
     elif inp.startswith("FLOAT"):
         variableName = inp[6::]
         if not variableName in variables:
@@ -28,13 +40,18 @@ def READ(inp):
             variables[variable] = str(input("Enter the value for the variable > "))
         else:
             print(f"The variable {variable} already exists!")
-    elif inp.startswith("VIEW"):
-        variable = inp[5::]
-        if variable in variables:
-            print(variables[variable])
+        instruction.append(inp)
+    elif inp.startswith("LIST"):
+        for i in instruction:
+            print(i)
+        instruction.append(inp)
     elif inp.startswith("PRINT"):
         MSG = inp[6::]
-        print(MSG)
+        if MSG in variables:
+            print(variables[MSG])
+        else:
+            print(MSG)
+        instruction.append(inp)
     elif inp.startswith("HELP"):
             ins = inp[5::]
             if ins in instructions:
@@ -42,11 +59,16 @@ def READ(inp):
             else:
                 if ins != "":
                     print(f"The instruction {ins} does not exist")
+                else:
+                    for i in instructionsArray:
+                        print(i)
+            instruction.append(inp)
     elif inp.startswith("SUBTRACT"):
         variable1 = input("Enter the variable > ")
         variabl2 = input("Enter the other variable > ")
         if variable1 in variables and variable2 in variables:
-            variables[variable1] = variables[variabl1] - variables[variable2]
+            variables[variable1] = variables[variable1] - variables[variable2]
+        instruction.append(inp)
     elif inp.startswith("DIVIDE"):
         variable1 = float(input("Enter a variable > "))
         variable2 = float(input("Enter another variable > "))
@@ -57,6 +79,7 @@ def READ(inp):
         else:
             if variable1 and variable2 not in variables:
                 print(f"{variable1} and {variable2} are not existing variables!")
+        instruction.append(inp)
     elif inp.startswith("MULTIPLY"):
         variable1 = float(input("Enter a variable > "))
         variable2 = float(input("Enter another variable > "))
@@ -64,6 +87,7 @@ def READ(inp):
             variables[variable1] = variables[variable1] * variables[variable2]
         else:
             print(f"The variables {variable1} and {variable2} are not defined!")
+        instruction.append(inp)
     elif inp.startswith("ADD"):
         variable1 = input("Enter the variable > ")
         variable2 = input("Enter the other variable > ")
@@ -72,12 +96,26 @@ def READ(inp):
             print(f"The sum is {variables[variable1]}")
         else:
             print(f"The variables {variable1} and {variable2} do not exist!")
+        instruction.append(inp)
     elif inp.startswith("SETINT"):
         variable = inp[6::]
         if variable in variables:
-            variables[variable] = input("Enter the new value > ")
+            variables[variable] = int(input("Enter the new value > "))
         else:
             print(f"{variable} is not an existing variable!")
+        instruction.append(inp)
+    elif inp.startswith("SETSTR"):
+        variable = inp[6::]
+        if variable in variables:
+            variables[variable] = str(input("Enter the new value > "))
+        else:
+            print(f"{variable} is not an existing variable")
+        instruction.append(inp)
+    elif inp.startswith("SETFLT"):
+        variable = inp[6::]
+        if variable in variables:
+            variables[variable] = float(input("Enter the new value > "))
+        instruction.append(inp)
     elif inp.startswith("DEL"):
         variable = inp[4::]
         if variable in variables:
@@ -85,13 +123,29 @@ def READ(inp):
             print(f"Deleted the variable {variable}")
         else:
             print(F"{variable} is not an existing variable!")
+        instruction.append(inp)
     elif inp in variables:
             print(variables[inp])
     elif inp == "EXIT":
         exit()
+    elif inp == "CLEAR":
+        os.system(inp)
+        instruction.append(inp)
+    elif inp  == "CLS":
+        os.system(inp)
+        instruction.append(inp)
+    elif inp.startswith("COMMENT"):
+        pass
     else:
         if inp != "":
-            print(f"Syntax Error: {inp} is not valid!")
+            if OS_MODE == False:
+                print(f"Syntax Error: {inp} is not valid!")
+            else:
+                if not inp.startswith("chdir"):
+                    os.system(inp)
+                else:
+                    if not inp[6::] == "":
+                        os.chdir(inp[6::])          
         else:
             pass
 while True:
