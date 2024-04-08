@@ -18,10 +18,9 @@ instructions = {
     "SUBTRACT": "Subtract two numbers",
     "SETSTR":   "This changes a string's value",
     "SETFLT": "This changes a float's value",
-    "COMMENT": "This creates a comment",
 }
 instruction = []
-instructionsArray = ["INT", "COMMENT", "STRING", "ADD", "EXIT", "SETINT", "SETFLT", "SETSTR", "FLOAT", "ENABLE_OS_MODE", "DISABLE_OS_MODE", "CLS", "CLEAR"]
+instructionsArray = ["INT", "STRING", "ADD", "EXIT", "SETINT", "SETFLT", "SETSTR", "FLOAT", "ENABLE_OS_MODE", "DISABLE_OS_MODE", "CLS", "CLEAR"]
 def READ(inp):
     global OS_MODE
     if inp.startswith("INT"):
@@ -142,6 +141,12 @@ def READ(inp):
         instruction.append(inp)
     elif inp.startswith("COMMENT"):
         pass
+    elif inp.startswith("REPEAT"):
+        iterator = int(inp[7::])
+        if not iterator == "":
+            action = input("Enter the action > ")
+            for i in range(0, iterator):
+                READ(action)
     else:
         if inp != "":
             if OS_MODE == False:
