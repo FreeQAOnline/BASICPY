@@ -6,16 +6,22 @@ instructions = {
     "INT": "This creates an integer",
     "STRING": "This creates a string",
     "PRINT": "This outputs stuff",
-    "ADD":   "This adds two variables",
+    "ADD":   "This adds two numbers",
     "FLOAT": "This creates a float",
     "EXIT":  "This exits the interpreter",
     "ENABLE_OS_MODE":    "Enable OS mode",
     "DISABLE_OS_MODE":   "Disable OS mode",
     "CLS":  "Clear the screen (Windows)",
-    "CLEAR": "Clear the screen (Linux)",               
+    "CLEAR": "Clear the screen (Linux)", 
+    "SETINT": "Change an integer's value",
+    "DIVIDE": "Divide two variables",
+    "MULTIPLY": "Multiply two numbers",
+    "SUBTRACT": "Subtract two numbers",
+    "SETSTR":   "This changes a string's value",
+    "SETFLT": "This changes a float's value",
 }
 instruction = []
-instructionsArray = ["INT", "STRING", "ADD", "EXIT", "FLOAT", "ENABLE_OS_MODE", "DISABLE_OS_MODE", "CLS", "CLEAR"]
+instructionsArray = ["INT", "STRING", "ADD", "EXIT", "SETINT", "SETFLT", "SETSTR", "FLOAT", "ENABLE_OS_MODE", "DISABLE_OS_MODE", "CLS", "CLEAR"]
 def READ(inp):
     global OS_MODE
     if inp.startswith("INT"):
