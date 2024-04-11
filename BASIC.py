@@ -1,5 +1,5 @@
-OS_MODE = False
 import os
+OS_MODE = False
 variables = {}
 instructions = {
     "INT": "This creates an integer",
