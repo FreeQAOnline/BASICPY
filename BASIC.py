@@ -20,20 +20,7 @@ instructions = {
     "SETFLT": "This changes a float's value",
     "COMMENT": "This creates a comment",
 }
-instruction = []
-instructionsArray = ["COMMENT", "INT", "STRING", "ADD", "EXIT", "SETINT", "SETFLT", "SETSTR", "FLOAT", "ENABLE_OS_MODE", "DISABLE_OS_MODE", "CLS", "CLEAR"]
-def READ(inp):
-    global OS_MODE
-    if inp.startswith("INT"):
-        variableName  = inp[4::]
-        if not variableName in variables:
-             variables[variableName] = int(input("Enter the variable's value > "))
-        else:
-            print(f"{variableName} already exists!")
-        instruction.append(inp)
-    elif inp == "ENABLE_OS_MODE":
-        print("USE THIS AT YOUR OWN RISK...")
-        OS_MODE = True
+i1
     elif inp == "DISABLE_OS_MODE":
         OS_MODE = False
     elif inp.startswith("FLOAT"):
