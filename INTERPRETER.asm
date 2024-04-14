@@ -1,4 +1,4 @@
-;**************************************************************
+What is more memory efficient? Example #1: ;**************************************************************
 ;*                                                            *
 ;*  Copyright (C) 2024 PyDOS8                                 *
 ;*                                                            *
@@ -35,159 +35,32 @@ section .data
     INSTRUCTIONS: DB "PRINT", DB "EXIT", DB "ADD"
     SyntaxError: db "Syntax Error!"
     SyntaxErrorLength: equ $ - SyntaxError
-    PRINTBuf: db dup (0) ;    Input for the PRINT command
-    PRINT: db "Enter something to output > "
-    PRINTLength: equ $ - PRINT
-    AddFunctionNumber1Input: db "Enter a number > "
-    AddFunctionNumber1InputLength: equ $ - AddFunctionNumber1Input
-    num1AddFunction: db dup (0)    
-    num2AddFunction: db dup (0)
-    num1SubFunction: db dup (0)
-    num2SubFunction: db dup (0)
 
 _start:
-    ; Include needed libraries
-    EXTERN _printf
-    EXTERN _scanf
+        ; Include the needed libraries
+        EXTERN _printf
+        EXTERN _scanf
 
-    ; Output `msg` variable
-    MOV ECX, msg
-    MOV EDX, msgLength
-    CALL _printf
+        ; Output `msg` variable
+        MOV ECX, msg       
+        MOV EDX, msgLength
+        CALL _printf
 
-    ;;;;;;;;;;;;;;;
-    ;    PARSER   ;
-    ;;;;;;;;;;;;;;;
+        ; Get user input
+        MOV ECX, UserInput  ; Store the input into the `UserInput` buffer
+        MOV EDX, 12         ; The maximum input allowed for the buffer
+        CALL _scanf         ; Get input for the buffer
 
-    ; Get user input
-    MOV ECX, UserInput
-    MOV EDX, 12
-    CALL _scanf
+        ; Read user input
+        MOV ESI, [ECX]     ; Get the user input from the buffer (ECX)
 
-    ; Check if user input is valid syntax
-    CMP [ECX], INSTRUCTIONS
-    JE _Execute
-    JNE _SyntaxError
+        ; Check if the user input is not a valid instruction
+        CMP ESI, [INSTRUCTIONS]
+        JNE _SyntaxError
 
 _SyntaxError:
-    EXTERN _printf
-    MOV ECX, SyntaxError
+
+    ; Output `Syntax Error!`
+    MOV ECX, SyntaxError 
     MOV EDX, SyntaxErrorLength
-    CALL _printf
-
-;;;;;;;;;;;;;;;;;;;;;
-;    INTERPRETER    ;
-;;;;;;;;;;;;;;;;;;;;;
-
-_Execute:
-    ; EXITING
-    CMP [ECX], "EXIT"
-    JE _EXIT
-
-    ; PRINTING
-    CMP [ECX], "PRINT"
-    JE _PRINT
-
-    ; Adding
-    CMP [ECX], "ADD"
-    JE _Add
-
-    ; Subtracting
-    CMP [ECX], "SUB"
-    JE _Sub
-
-_Sub:
-    ; Include needed libraries
-    EXTERN _printf
-    EXTERN _scanf
-
-    ; Output AddFunctionNum1Input string
-    MOV ECX, AddFunctionNum1Input
-    MOV EDX, AddFunctionNum1InputLength
-    CALL _printf
-    
-    ; Get input for num1
-    MOV ECX, num1SubFunction
-    MOV EDX, 4
-    CALL _scanf
-
-    ; Output AddFunctionNum2Input string
-    MOV ECX, AddFunctionNum1Input
-    MOV EDX, AddFunctionNum2Input
-    CALL _printf
-    MOV EDX, [ECX]
-
-    ; Get input for num2
-    MOV ECX, num2SubFunction
-    MOV EDX, 4
-    CALL _scanf
-    MOV ESI, [ECX]
-
-   ; Subtract the value
-    SUB EDX, ESI ; EDX = EDX - ESI 
-
-    JMP _start
-_Add:
-    ; Include needed libraries
-    EXTERN _printf
-    EXTERN _scanf
-
-    ; Output `AddFunctionNum1Input`
-    MOV ECX, AddFunctionNum1Input
-    MOV EDX, AddFunctionNum1InputLength
-    CALL _printf
-
-    ; Get input for num1
-    MOV ECX, num1AddFunction
-    MOV EDX, 4
-    CALL _scanf
-    
-    ; Output `AddFunctionNum1Input`
-    MOV ECX, AddFunctionNum1Input
-    MOV EDX, AddFunctionNum1Length
-    CALL _printf
-    MOV ESI, [ECX]
-    
-    ; Get input for num2
-    MOV ECX, num2AddFunction
-    MOV EDX, 4
-    CALL _scanf
-    MOV EDI, [ECX]
-
-    ; Output sum
-    ADD ESI, EDI
-    MOV ECX, ESI
-    MOV EDX, 4
-    CALL _printf
-    
-    XOR ESI, ESI
-    XOR ECX, ECX
-    XOR EDX, EDX
-    JMP _start
-
-_PRINT:
-    ; Import needed libraries
-    EXTERN _scanf
-    EXTERN _printf
-
-    ; Output `PRINT` variable value
-    MOV ECX, PRINT
-    MOV EDX, PRINTLength
-    CALL _printf
-
-    ; Get input
-    MOV ECX, PRINTBuf
-    MOV EDX, 12
-    CALL _scanf
-
-    ; Output input
-    MOV ESI, [ECX]
-    MOV ECX, ESI
-    MOV EDX, 12
-    CALL _printf
-    JMP _start
-
-_exit:
-    MOV EAX, 1
-    XOR EBX, EBX
-    INT 0x80
+    CALL _scanf 
