@@ -20,123 +20,89 @@
 ;*                                                            *
 ;**************************************************************   
 
+section .text
+    global _start
+    global _exit   
+    global _Execute
+    global _SyntaxError
+
 section .data
-    UserInput: db "BASIC > "
-    UserInputLength: equ $ - UserInput
-    INP: db dup (0) ; This will store the user's input
-    CreateVariable: db "Create a variable > "
-    CreateVariableLength: equ $ - CreateVariable
-    INSTRUCTIONS:
-        DB "EXIT"
-        DB "HELP"
-        DB "PRINT"
-        DB "VAR"
+    msg: db "BASIC > "
+    msgLength: equ $ - msg
+    UserInput: db dup (0)    ; INPUT
+    INSTRUCTIONS: DB "PRINT", DB "EXIT"
     SyntaxError: db "Syntax Error!"
     SyntaxErrorLength: equ $ - SyntaxError
-    InstructionsLength: equ $ - INSTRUCTIONS
-    userInputBuf: db dup (0)
-    variable: db dup (0)
-
-section .text
-    global _start 
-    global _SyntaxError
-    global _CheckInstruction
-    global _exit
-    global _help
-    global _print
-    global _CreateAVariable
+    PRINTBuf: db dup (0) ;    Input for the PRINT command
+    PRINT: db "Enter something to output > "
+    PRINTLength: equ $ - PRINT
 
 _start:
-        ; Output `UserInput` variable
-        MOV ECX, UserInput
-        MOV EDX, UserInputLength
-        CALL _printf
-        
-        ; Include necassary libraries
-        EXTERN _printf
-        EXTERN _scanf
+    ; Include needed libraries
+    EXTERN _printf
+    EXTERN _scanf
 
-        ;;;;;;;;;;;;;
-        ;   PARSER  ;
-        ;;;;;;;;;;;;;
+    ; Output `msg` variable
+    MOV ECX, msg
+    MOV EDX, msgLength
+    CALL _printf
 
-        ; Read user input
-        MOV ECX, INP
-        MOV EDX, 12
-        CALL _scanf
+    ;;;;;;;;;;;;;;;
+    ;    PARSER   ;
+    ;;;;;;;;;;;;;;;
 
-        ; Check if the user input is a valid instruction
-        CMP [ECX], [INSTRUCTIONS]
-        JE _CheckInstruction
-        JNE _SyntaxError
+    ; Get user input
+    MOV ESI, [ECX]
+    MOV ECX, UserInput
+    MOV EDX, 12
+    CALL _scanf
 
+    ; Check if user input is valid syntax
+    CMP [ECX], INSTRUCTIONS
+    JE _Execute
+    JNE _SyntaxError
 
 _SyntaxError:
-        EXTERN _printf
-        MOV ECX, SyntaxError
-        MOV EDX, SyntaxErrorLength
-        CALL _printf
+    EXTERN _printf
+    MOV ECX, SyntaxError
+    MOV EDX, SyntaxErrorLength
+    CALL _printf
 
-    ;;;;;;;;;;;;;;;;;;;
-    ;   INTERPRETER   ;
-    ;;;;;;;;;;;;;;;;;;;
-    _CheckInstruction:
+;;;;;;;;;;;;;;;;;;;;;
+;    INTERPRETER    ;
+;;;;;;;;;;;;;;;;;;;;;
 
-        ; EXITING
-        CMP [ECX], "EXIT"
-        JE _exit
+_Execute:
+    ; EXITING
+    CMP [ECX], "EXIT"
+    JE _EXIT
 
-        ; HELP   
-        CMP [ECX], "HELP"
-        JE _help
+    ; PRINTING
+    CMP [ECX], "PRINT"
+    JE _PRINT
 
-        ; PRINT
-        CMP [ECX], "PRINT"
-        JE _print
-    
-        ; VAR
-        CMP [ECX], "VAR"
-        JE _CreateAVariable
+_PRINT:
+    ; Import needed libraries
+    EXTERN _scanf
+    EXTERN _printf
 
-_print:
-        ; Include necessary functions
-        extern _printf
-        extern _scanf
+    ; Output `PRINT` variable value
+    MOV ECX, PRINT
+    MOV EDX, PRINTLength
+    CALL _printf
 
-        ; Get what to output
-        MOV ECX, userInputBuf
-        MOV EDX, 12
-        CALL _scanf
+    ; Get input
+    MOV ECX, PRINTBuf
+    MOV EDX, 12
+    CALL _scanf
 
-        MOV ESI, [ECX]
-        
-        ; Output it
-        MOV ECX, ESI
-        MOV EDX, 12
-        CALL _printf
-
-_help:
-        EXTERN _printf
-        MOV ECX, [INSTRUCTIONS]
-        MOV EDX, InstructionsLength
-        CALL _printf
+    ; Output input
+    MOV ESI, [ECX]
+    MOV ECX, ESI
+    MOV EDX, 12
+    CALL _printf
 
 _exit:
-        EXTERN _ExitProcess
-        XOR ECX, ECX
-        XOR EDX, EDX
-        CALL _ExitProcess
-    
-_CreateAVariable:
-        EXTERN _scanf
-        EXTERN _printf
-
-        ; Output the CreateVariable string
-        MOV ECX, CreateVariable
-        MOV EDX, CreateVariableLength
-        CALL _printf
-
-        ; Get user input
-        MOV ECX, variable
-        MOV EDX, 12
-        CALL _scanf
+    MOV EAX, 1
+    XOR EBX, EBX
+    INT 0x80
