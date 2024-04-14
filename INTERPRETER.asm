@@ -1,134 +1,213 @@
-;**************************************************************
-;*                                                            *
-;*  Copyright (C) 2024 PyDOS8                                 *
-;*                                                            *
-;*  This program is free software: you can redistribute it    *
-;*  and/or modify it under the terms of the GNU General       *
-;*  Public License as published by the Free Software          *
-;*  Foundation, either version 3 of the License, or           *
-;*  0.0 any later version.                                    *
-;*                                                            *
-;*  This program is distributed in the hope that it will be   *
-;*  useful, but WITHOUT ANY WARRANTY; without even the        *
-;*  implied warranty of MERCHANTABILITY or FITNESS FOR A      *
-;*  PARTICULAR PURPOSE.  See the GNU General Public License   *
-;*  for more details.                                         *
-;*                                                            *
-;*  You should have received a copy of the GNU General        *
-;*  Public License along with this program.  If not, see      *
-;*  <http://www.gnu.org/licenses/>.                           *
-;*                                                            *
-;**************************************************************   
-
-section .text
+section .text  
     global _start
-    global _exit   
+    global _exit
     global _SyntaxError
     global _Execute
     global _Add
     global _Sub
+    global _Mul
 
 section .data
-    UserInput: db dup (0)    ; INPUT
-    INSTRUCTIONS: DB "PRINT", DB "EXIT", DB "ADD", DB "SUB"
-    string: db ""
-
+    userInp: db dup (0)
+    instructions: db "PRINT", db "EXIT", "ADD"
 _start:
-        ; Include the needed libraries
-        EXTERN _printf
-        EXTERN _scanf
+    extern _scanf
 
-        ; Output `BASIC >`
-        MOV [string], "BASIC > " ; Change the value of the `SyntaxError` variable to "BASIC > "
-        MOV ECX, SyntaxError       
-        MOV EDX, 8
-        CALL _printf
+    ; Output "BASIC > "
 
-        ; Get user input
-        MOV ECX, UserInput  ; Store the input into the `UserInput` buffer
-        MOV EDX, 12         ; The maximum input allowed for the buffer
-        CALL _scanf         ; Get input for the buffer
-
-        ; Read user input
-        MOV ESI, [ECX]     ; Get the user input from the buffer (ECX)
-
-        ; Check if the user input is not a valid instruction
-        CMP ESI, [INSTRUCTIONS]
-        JNE _SyntaxError
-        JE _Execute
-
-_Execute:
+    ; Setup the needed registers
+    MOV ESI, "BASIC > "
     
-    ; PRINTING
-    ;CMP [ECX], "PRINT"
-    ;JE _PRINT
+    ; Output
+    MOV EAX, 4
+    MOV EBX, 1
+    MOV ECX, ESI
+    MOV EDX, 8
+    INT 0x80
 
-    ; EXITING
-    CMP [ECX], "EXIT"
+    ; Get user input
+    MOV ECX, userInp
+    MOV EDX, 20
+    CALL _scanf
+
+    ; Read the user input
+    MOV ESI, [userInp]
+
+    ; Check if the user input is valid
+    CMP ESI, [instructions]
+    JNE _SyntaxError
+
+    CMP ESI, "PRINT"
+    JE _PRINT
+
+    CMP ESI, "EXIT"
     JE _exit
 
-    ; Addition
-    CMP [ECX], "SUB"
-    JE _sub
+    CMP ESI, "ADD"
+    JE _Add
 
-_sub:
-    ; Set string to "Enter a number > "
-    MOV [string], "Enter a number > "
-    
-    ; Reset user input buffer
-    MOV [userInp], ""
+    CMP ESI, "SUB"
+    JE _Sub
 
-    ; Output string
-    MOV ECX, string
-    MOV EDX, 17
-    CALL _printf
+    CMP ESI, "MUL"
+    JE _Mul
 
-    ; Get user input from the userInp buffer
-    MOV ECX, userInp
-    MOV EDX, 4
-    CALL _scanf
+_PRINT:
 
-    ; Store user input buffer
-    MOV ESI, [ECX]
+    ; Setup the register
+    MOV ESI, "Enter > "
 
-    ; Reset user input buffer
-    MOV [userInp], ""
-
-    ; Reoutput string
-    MOV ECX, string
-    MOV EDX, 17
-    CALL _printf
-
-    ; Get input from the user input buffer
-    MOV ECX, userInp
-    MOV EDX, 4
-    CALL _scanf
-
-    ; Store the user input buffer
-    MOV EDX, [ECX]
-
-    ; Get the result
-    SUB ESI, EDX
-
-    ; Output the result
+    ; Output
+    MOV EAX, 4
+    MOV EBX, 1
     MOV ECX, ESI
-    MOV EDX, 4
-    CALL _printf
-
-    JMP _start
+    MOV EDX, 8
+    INT 0x80
 
 _SyntaxError:
-    ; Change the value of the string variable to 'Syntax Error!'
-    MOV [string], "Syntax Error!"
+    
+    ; Setup the register
+    MOV ESI, "Syntax Error!"
 
-    ; Output `Syntax Error!`
-    MOV ECX, string 
-    MOV EDX, 12
-    CALL _printf
-
-    JMP _start
+    ; Output
+    MOV EAX, 4
+    MOV EBX, 1
+    MOV ECX, ESI
+    MOV EDX, 13
+    INT 0x80
 
 _exit:
     MOV EAX, 1
     XOR EBX, EBX
     INT 0x80
+
+_ADD:
+
+    ; Setup the register
+    MOV ESI, "Enter a number > "
+    
+    ; Output
+    MOV EAX, 4
+    MOV EBX, 1
+    MOV ECX, ESI
+    MOV EDX, 15
+    INT 0x80
+
+    ; Get user input
+    MOV ECX, userInp
+    MOV EDX, 4
+    CALL _scanf
+
+    ; Store user input
+    MOV EDI, [ECX]
+
+    ; Output
+    MOV EAX, 4
+    MOV EBX, 1
+    MOV ECX, ESI
+    MOV EDX, 15
+    INT 0x80
+
+    ; Get user input
+    MOV ECX, userInp
+    MOV EDX, 4
+    CALL _scanf
+
+    ; Store user input
+    MOV ESI, [ECX]
+
+    ; Add the result
+    ADD EDI, ESI
+
+    ; Output the result
+    MOV EAX, 4
+    MOV EBX, 1
+    MOV ECX, EDI
+    MOV EDX, 4
+    INT 0x80
+
+_SUB:
+
+    ; Setup the register
+    MOV ESI, "Enter a number > "
+
+    ; Output
+    MOV EAX, 4
+    MOV EBX, 1
+    MOV ECX, ESI
+    MOV EDX, 15
+    INT 0x80
+
+    ; Get input
+    MOV ECX, userInp
+    MOV EDX, 4
+    CALL _scanf
+
+
+    ; Store input
+    MOV EDI, [ECX]
+
+    ; Reset buffer
+    MOV BYTE [userInp], 0
+
+    ; Output
+    MOV EAX, 4
+    MOV EBX, 1
+    MOV ECX, ESI
+    MOV EDX, 15
+    INT 0x80
+
+    ; Get input
+    MOV ECX, userInp
+    MOV EDX, 4
+    CALL _scanf
+
+    ; Store input
+    MOV ESI, [ECX]
+
+    ; Subtract the result
+    SUB EDI, ESI
+
+    ; Output the result
+    MOV EAX, 4
+    MOV EBX, 1
+    MOV ECX, EDI
+    MOV EDX, 4
+    INT 0x80
+
+_Mul:
+    ; Setup the register
+    MOV ESI, "Enter a number > "
+
+    ; Output
+    MOV EAX, 4
+    MOV EBX, 1
+    MOV ECX, ESI
+    MOV EDX, 15
+    INT 0x80
+
+    ; Get input
+    MOV ECX, userInp
+    MOV EDX, 4
+    CALL _scanf
+
+    ; Store input
+    MOV EDI, [ECX]
+
+    ; Output
+    MOV EAX, 4
+    MOV EBX, 1
+    MOV ECX, ESI
+    MOV EDX, 15
+    INT 0x80
+
+    ; Get input
+    MOV ECX, userInp
+    MOV EDX, 4
+    CALL _scanf
+
+    ; Store input
+    MOV ESI, [ECX]
+
+    ; Multiply the result
+    MUL ESI, EDI
