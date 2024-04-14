@@ -1,4 +1,4 @@
-What is more memory efficient? Example #1: ;**************************************************************
+;**************************************************************
 ;*                                                            *
 ;*  Copyright (C) 2024 PyDOS8                                 *
 ;*                                                            *
@@ -29,21 +29,18 @@ section .text
     global _Sub
 
 section .data
-    msg: db "BASIC > "
-    msgLength: equ $ - msg
     UserInput: db dup (0)    ; INPUT
     INSTRUCTIONS: DB "PRINT", DB "EXIT", DB "ADD"
-    SyntaxError: db "Syntax Error!"
-    SyntaxErrorLength: equ $ - SyntaxError
-
+    string: db ""
 _start:
         ; Include the needed libraries
         EXTERN _printf
         EXTERN _scanf
 
-        ; Output `msg` variable
-        MOV ECX, msg       
-        MOV EDX, msgLength
+        ; Output `BASIC >`
+        MOV [string], "BASIC > " ; Change the value of the `SyntaxError` variable to "BASIC > "
+        MOV ECX, SyntaxError       
+        MOV EDX, 8
         CALL _printf
 
         ; Get user input
@@ -57,10 +54,30 @@ _start:
         ; Check if the user input is not a valid instruction
         CMP ESI, [INSTRUCTIONS]
         JNE _SyntaxError
+        JE _Execute
+
+_Execute:
+    
+    ; PRINTING
+    ;CMP [ECX], "PRINT"
+    ;JE _PRINT
+
+    ; EXITING
+    CMP [ECX], "EXIT"
+    JE _exit
 
 _SyntaxError:
+    ; Change the value of the string variable to 'Syntax Error!'
+    MOV [string], "Syntax Error!"
 
     ; Output `Syntax Error!`
-    MOV ECX, SyntaxError 
-    MOV EDX, SyntaxErrorLength
-    CALL _scanf 
+    MOV ECX, string 
+    MOV EDX, 12
+    CALL _printf
+
+    JMP _start
+
+_exit:
+    MOV EAX, 1
+    XOR EBX, EBX
+    INT 0x80
