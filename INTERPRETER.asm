@@ -43,6 +43,7 @@ section .data
     AddFunctionNumber2InputLength: equ $ - AddFunctionNumberInput
     num1AddFunction: db dup (0)    
     num2AddFunction: db dup (0)
+
 _start:
     ; Include needed libraries
     EXTERN _printf
