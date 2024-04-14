@@ -30,8 +30,9 @@ section .text
 
 section .data
     UserInput: db dup (0)    ; INPUT
-    INSTRUCTIONS: DB "PRINT", DB "EXIT", DB "ADD"
+    INSTRUCTIONS: DB "PRINT", DB "EXIT", DB "ADD", DB "SUB"
     string: db ""
+
 _start:
         ; Include the needed libraries
         EXTERN _printf
@@ -65,6 +66,56 @@ _Execute:
     ; EXITING
     CMP [ECX], "EXIT"
     JE _exit
+
+    ; Addition
+    CMP [ECX], "SUB"
+    JE _sub
+
+_sub:
+    ; Set string to "Enter a number > "
+    MOV [string], "Enter a number > "
+    
+    ; Reset user input buffer
+    MOV [userInp], ""
+
+    ; Output string
+    MOV ECX, string
+    MOV EDX, 17
+    CALL _printf
+
+    ; Get user input from the userInp buffer
+    MOV ECX, userInp
+    MOV EDX, 4
+    CALL _scanf
+
+    ; Store user input buffer
+    MOV ESI, [ECX]
+
+    ; Reset user input buffer
+    MOV [userInp], ""
+
+    ; Reoutput string
+    MOV ECX, string
+    MOV EDX, 17
+    CALL _printf
+
+    ; Get input from the user input buffer
+    MOV ECX, userInp
+    MOV EDX, 4
+    CALL _scanf
+
+    ; Store the user input buffer
+    MOV EDX, [ECX]
+
+    ; Get the result
+    SUB ESI, EDX
+
+    ; Output the result
+    MOV ECX, ESI
+    MOV EDX, 4
+    CALL _printf
+
+    JMP _start
 
 _SyntaxError:
     ; Change the value of the string variable to 'Syntax Error!'
