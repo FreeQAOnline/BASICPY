@@ -112,7 +112,7 @@ _Add:
     MOV EDX, AddFunctionNum2Length
     CALL _printf
     MOV ESI, [ECX]
-
+    
     ; Get input for num2
     MOV ECX, num2AddFunction
     MOV EDX, 4
@@ -128,6 +128,7 @@ _Add:
     XOR ESI, ESI
     XOR ECX, ECX
     XOR EDX, EDX
+    JMP _start
 
 _PRINT:
     ; Import needed libraries
@@ -149,6 +150,7 @@ _PRINT:
     MOV ECX, ESI
     MOV EDX, 12
     CALL _printf
+    JMP _start
 
 _exit:
     MOV EAX, 1
