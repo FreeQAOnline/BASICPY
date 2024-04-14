@@ -62,7 +62,6 @@ _start:
     ;;;;;;;;;;;;;;;
 
     ; Get user input
-    MOV ESI, [ECX]
     MOV ECX, UserInput
     MOV EDX, 12
     CALL _scanf
