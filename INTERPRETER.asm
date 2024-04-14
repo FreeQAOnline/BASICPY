@@ -25,18 +25,22 @@ section .text
     global _exit   
     global _SyntaxError
     global _Execute
+    global _Add
 
 section .data
     msg: db "BASIC > "
     msgLength: equ $ - msg
     UserInput: db dup (0)    ; INPUT
-    INSTRUCTIONS: DB "PRINT", DB "EXIT"
+    INSTRUCTIONS: DB "PRINT", DB "EXIT", DB "ADD"
     SyntaxError: db "Syntax Error!"
     SyntaxErrorLength: equ $ - SyntaxError
     PRINTBuf: db dup (0) ;    Input for the PRINT command
     PRINT: db "Enter something to output > "
     PRINTLength: equ $ - PRINT
-
+    AddFunctionNumber1Input: db "Enter a number > "
+    AddFunctionNumber1InputLength: equ $ - AddFunctionNumber1Input
+    AddFunctionNumber2Input: db "Enter another number > "
+    AddFunctionNumber2InputLength: equ $ - AddFunctionNumberInput
 _start:
     ; Include needed libraries
     EXTERN _printf
@@ -80,6 +84,25 @@ _Execute:
     ; PRINTING
     CMP [ECX], "PRINT"
     JE _PRINT
+
+    ; Adding
+    CMP [ECX], "ADD"
+    JE _Add
+
+_Add:
+    ; Include needed libraries
+    EXTERN _printf
+    EXTERN _scanf
+
+    ; Output `AddFunctionNum1Input`
+    MOV ECX, AddFunctionNum1Input
+    MOV EDX, AddFunctionNum1InputLength
+    CALL _printf
+
+    ; Output `AddFunctionNum2Input`
+    MOV ECX, AddFunctionNum2Input
+    MOV EDX, AddFunctionNum2Length
+    CALL _printf
 
 _PRINT:
     ; Import needed libraries
