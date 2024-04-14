@@ -23,6 +23,8 @@
 section .text
     global _start
     global _exit   
+    global _SyntaxError
+    global _Execute
 
 section .data
     msg: db "BASIC > "
