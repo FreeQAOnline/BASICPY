@@ -125,6 +125,10 @@ _Add:
     MOV EDX, 4
     CALL _printf
 
+    XOR ESI, ESI
+    XOR ECX, ECX
+    XOR EDX, EDX
+
 _PRINT:
     ; Import needed libraries
     EXTERN _scanf
