@@ -40,8 +40,6 @@ section .data
     PRINTLength: equ $ - PRINT
     AddFunctionNumber1Input: db "Enter a number > "
     AddFunctionNumber1InputLength: equ $ - AddFunctionNumber1Input
-    AddFunctionNumber2Input: db "Enter another number > "
-    AddFunctionNumber2InputLength: equ $ - AddFunctionNumberInput
     num1AddFunction: db dup (0)    
     num2AddFunction: db dup (0)
     num1SubFunction: db dup (0)
@@ -144,9 +142,9 @@ _Add:
     MOV EDX, 4
     CALL _scanf
     
-    ; Output `AddFunctionNum2Input`
-    MOV ECX, AddFunctionNum2Input
-    MOV EDX, AddFunctionNum2Length
+    ; Output `AddFunctionNum1Input`
+    MOV ECX, AddFunctionNum1Input
+    MOV EDX, AddFunctionNum1Length
     CALL _printf
     MOV ESI, [ECX]
     
