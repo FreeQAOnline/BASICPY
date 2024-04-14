@@ -26,6 +26,7 @@ section .text
     global _SyntaxError
     global _Execute
     global _Add
+    global _Sub
 
 section .data
     msg: db "BASIC > "
@@ -43,6 +44,8 @@ section .data
     AddFunctionNumber2InputLength: equ $ - AddFunctionNumberInput
     num1AddFunction: db dup (0)    
     num2AddFunction: db dup (0)
+    num1SubFunction: db dup (0)
+    num2SubFunction: db dup (0)
 
 _start:
     ; Include needed libraries
@@ -92,6 +95,41 @@ _Execute:
     CMP [ECX], "ADD"
     JE _Add
 
+    ; Subtracting
+    CMP [ECX], "SUB"
+    JE _Sub
+
+_Sub:
+    ; Include needed libraries
+    EXTERN _printf
+    EXTERN _scanf
+
+    ; Output AddFunctionNum1Input string
+    MOV ECX, AddFunctionNum1Input
+    MOV EDX, AddFunctionNum1InputLength
+    CALL _printf
+    
+    ; Get input for num1
+    MOV ECX, num1SubFunction
+    MOV EDX, 4
+    CALL _scanf
+
+    ; Output AddFunctionNum2Input string
+    MOV ECX, AddFunctionNum1Input
+    MOV EDX, AddFunctionNum2Input
+    CALL _printf
+    MOV EDX, [ECX]
+
+    ; Get input for num2
+    MOV ECX, num2SubFunction
+    MOV EDX, 4
+    CALL _scanf
+    MOV ESI, [ECX]
+
+   ; Subtract the value
+    SUB EDX, ESI ; EDX = EDX - ESI 
+
+    JMP _start
 _Add:
     ; Include needed libraries
     EXTERN _printf
@@ -124,7 +162,7 @@ _Add:
     MOV ECX, ESI
     MOV EDX, 4
     CALL _printf
-
+    
     XOR ESI, ESI
     XOR ECX, ECX
     XOR EDX, EDX
