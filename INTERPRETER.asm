@@ -9,7 +9,7 @@ section .text
 
 section .data
     userInp: db dup (0)
-    instructions: db "PRINT", db "EXIT", "ADD"
+    instructions: db "PRINT", db "EXIT", "ADD", "SUB", "MUL"
 _start:
     extern _scanf
 
