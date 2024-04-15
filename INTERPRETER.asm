@@ -65,7 +65,9 @@ _PRINT:
     INT 0x80
 
     ; Get input
-    
+    MOV ECX, userInp
+    MOV EDX, 12
+    CALL _scanf
 
 _SyntaxError:
     
