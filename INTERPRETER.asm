@@ -64,6 +64,9 @@ _PRINT:
     MOV EDX, 8
     INT 0x80
 
+    ; Get input
+    
+
 _SyntaxError:
     
     ; Setup the register
