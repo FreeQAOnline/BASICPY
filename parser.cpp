@@ -1,4 +1,4 @@
-* A parser for a BASIC interpreter */
+/* A parser for a BASIC interpreter */
 
 #include <iostream>
 #include <string>
