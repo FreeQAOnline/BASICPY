@@ -50,7 +50,11 @@ public:
             FLOAT64,  /* A 64 bit double */
       }
 };
+class Parser{
+public:
+  Tokens token;
+};
 int main(){
-      Tokens token;
+      Parser parser;
       return 0;
 }
