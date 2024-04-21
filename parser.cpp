@@ -1,4 +1,4 @@
-/* A parser for a BASIC interpreter */
+/* A parser for a ELA (Easy Assembly language) */
 
 #include <iostream>
 #include <string>
