@@ -20,7 +20,8 @@ instructions = {
     "SETFLT": "This changes a float's value",
     "COMMENT": "This creates a comment",
 }
-i1
+    if inp == "ENABLE_OS_MODE":
+        OS_MODE = True
     elif inp == "DISABLE_OS_MODE":
         OS_MODE = False
     elif inp.startswith("FLOAT"):
